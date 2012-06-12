@@ -154,19 +154,18 @@ class Barang_ctl extends CI_Controller {
     }
 
     function hapusbarang_exec(){
-        //$this->load->model('nasabah/nasabah_model');
         $_plu = $_POST['plu'];
         $data = 0;
-        //$this->nasabah_model->cekNasabah_bank($_bankid);
         $result['data']=$data;
         if ($data == 0):
-            $result['success'] =   $this->barang_model->deleteBarang($_plu);
+            $result['success'] =  $this->barang_model->deleteBarang($_plu);
         else:
             $result['success'] =2;
         endif;
         echo json_encode($result);
     }
 
+    ///END CRUD FUNCTION
 }
 
 /* End of file barang_ctl */
