@@ -11,8 +11,9 @@
 <script type="text/javascript" src="<?php echo base_url();?>assets/easyui/jquery.easyui.min.js"></script>
 <script type="text/javascript">
     var hn = '<?php echo base_url();?>';
+    var vPageNumber = 1;
 
-    function key_barang() {
+    function key_barang(pageNumber) {
         $('a#btnSimpan').hide();
         $('a#btnBatal').hide();
         $('a#btnTambah').show();
@@ -20,10 +21,10 @@
             function () {
                 var msg = $('#search').val();
                 var stn = $('select#select-satuan').val();
-                $.post(hn + 'barang_ctl/search_barang', {descp_msg:msg, descp_satuan:stn}, function (data) {
+                $.post(hn + 'barang_ctl/search_barang', {descp_msg:msg, descp_satuan:stn, pageNumber:vPageNumber}, function (data) {
                     $("#content_barang").html(data);
                     $('#pp').pagination({
-                        pageNumber:1,
+                        pageNumber:vPageNumber,
                         total:$('#recNum').val(),
                         //tentukan banyak rec yg mau ditampilkan disini
                         pageList:[20],
@@ -35,7 +36,7 @@
 
     }
     $(document).ready(function () {
-        key_barang();
+        key_barang(vPageNumber);
     });
 
 
@@ -48,8 +49,10 @@
                 $('#pp').pagination({loading:true});
                 var msg = $('#search').val();
                 var stn = $('select#select-satuan').val();
+
                 $.post(hn + 'barang_ctl/search_barang/ #content_barang', {descp_msg:msg, descp_satuan:stn, pageNumber:pageNumber}, function (data) {
                     $("#content_barang").html(data);
+                    vPageNumber=pageNumber;
                 });
                 $('#pp').pagination({loading:false});
             }
@@ -132,7 +135,7 @@
     //BATAL - Cancel
     $('a#btnBatal').live('click', function (e) {
         e.preventDefault();
-        key_barang();
+        key_barang(vPageNumber);
 
         $('#pp').show();
         $('#search').removeAttr('disabled');
@@ -158,10 +161,11 @@
             harga:vharga
         }, function (data) {
             var x = eval('(' + data + ')');
+
             if (x.success == 1) {
                 $('#content_barang').hide();
                 try {
-                    key_barang();
+                    key_barang(vPageNumber);
                     $('div#content_barang').fadeIn(200);
                     $('#search').removeAttr('disabled');
                     $('#select-satuan').removeAttr('disabled');
@@ -243,12 +247,13 @@
                     success:function (msg) {
                         var x = eval('(' + msg + ')');
                         if (x.success == 1) {
-                            parent.slideUp(300, function () {
-                                parent.remove();
-                            });
+                           // parent.slideUp(300, function () {
+                             //   parent.remove();
+                            //});
 
                             $("#Alert").html("<p><strong><a style='color:blue'>Success : </a></strong>  Barang <a style='color:green'>' " + vbarang + " '</a> Berhasil di Hapus.</p>");
                             $('#Alert').slideDown(300);
+                            key_barang(vPageNumber);
                         }
                         else if ((x.success == 2)) {
                             $("#Alert").html("<p><strong><a style='color:maroon'>Pemberitahuan :</a></strong> Barang <a style='color:green'>' " + vbarang + " '</a> Tidak dapat diHapus!</p>");
