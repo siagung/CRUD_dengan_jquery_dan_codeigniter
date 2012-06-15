@@ -12,35 +12,51 @@
 <script type="text/javascript">
     var hn = '<?php echo base_url();?>';
     var vPageNumber = 1;
-
-    function key_barang(pageNumber) {
+    function key_barang() {
         $('a#btnSimpan').hide();
         $('a#btnBatal').hide();
         $('a#btnTambah').show();
-        $('input#search').keyup(
-            function () {
-                var msg = $('#search').val();
-                var stn = $('select#select-satuan').val();
-                $.post(hn + 'barang_ctl/search_barang', {descp_msg:msg, descp_satuan:stn, pageNumber:vPageNumber}, function (data) {
-                    $("#content_barang").html(data);
-                    $('#pp').pagination({
-                        pageNumber:vPageNumber,
-                        total:$('#recNum').val(),
-                        //tentukan banyak rec yg mau ditampilkan disini
-                        pageList:[20],
-                        //sembunyikan pagelist pagintion easyui
-                        showPageList:false
-                    });
-                });
-            }).keyup();
-
+        var msg = $('#search').val();
+        var stn = $('select#select-satuan').val();
+        $.post(hn + 'barang_ctl/search_barang', {descp_msg:msg, descp_satuan:stn, pageNumber:vPageNumber}, function (data) {
+            $("#content_barang").html(data);
+            $('#pp').pagination({
+                pageNumber:vPageNumber,
+                total:$('#recNum').val(),
+                //tentukan banyak rec yg mau ditampilkan disini
+                pageList:[20],
+                //sembunyikan pagelist pagintion easyui
+                showPageList:false
+            });
+        });
     }
+
     $(document).ready(function () {
-        key_barang(vPageNumber);
+        key_barang();
     });
 
-
     $(function () {
+
+        function handle_SearchBarang(){
+            var msg = $('#search').val();
+            var stn = $('select#select-satuan').val();
+            $.post(hn + 'barang_ctl/search_barang', {descp_msg:msg, descp_satuan:stn, pageNumber:vPageNumber}, function (data) {
+                $("#content_barang").html(data);
+                $('#pp').pagination({
+                    pageNumber:vPageNumber,
+                    total:$('#recNum').val(),
+                    //tentukan banyak rec yg mau ditampilkan disini
+                    pageList:[20],
+                    //sembunyikan pagelist pagintion easyui
+                    showPageList:false
+                });
+            });
+        }
+
+        $('input#search').live('keyup', function(){
+            handle_SearchBarang();
+        });
+
         $('#pp').pagination({
             total:$('#recNum').val(),
             pageList:[20],
@@ -135,7 +151,7 @@
     //BATAL - Cancel
     $('a#btnBatal').live('click', function (e) {
         e.preventDefault();
-        key_barang(vPageNumber);
+        key_barang();
 
         $('#pp').show();
         $('#search').removeAttr('disabled');
